@@ -9,7 +9,6 @@
 #include <LightGBM/dataset.h>
 #include <LightGBM/meta.h>
 
-#include <array>
 #include <cstdint>
 #include <string>
 #include <map>
@@ -453,20 +452,15 @@ class Tree {
     double p;
   };
 
-  /*! \brief Run QuadratureTreeSHAP with the smallest quadrature rule that is exact for this tree*/
+  /*! \brief Run QuadratureTreeSHAP from the root, with the number of quadrature points that is exact for this tree*/
   template <typename FeatureValues, typename Phi>
   void QuadratureTreeSHAPRoot(const FeatureValues& feature_values, int num_features, Phi& phi) const;
 
-  /*! \brief Run QuadratureTreeSHAP from the root with kNumPoints quadrature points*/
-  template <int kNumPoints, typename FeatureValues, typename Phi>
-  void QuadratureTreeSHAPRun(const FeatureValues& feature_values, Phi& phi) const;
-
-  /*! \brief QuadratureTreeSHAP recursion over the subtree at node, with kNumPoints quadrature points*/
-  template <int kNumPoints, typename FeatureValues, typename Phi>
-  void QuadratureTreeSHAPNode(const FeatureValues& feature_values, Phi& phi, int node,
-                              const std::array<double, kNumPoints>& c, double w_prod,
-                              QuadraturePathFeature* path, int path_len,
-                              std::array<double, kNumPoints>* h) const;
+  /*! \brief QuadratureTreeSHAP recursion over the subtree at node, with num_points quadrature points*/
+  template <typename FeatureValues, typename Phi>
+  void QuadratureTreeSHAPNode(const FeatureValues& feature_values, Phi& phi, int node, int num_points,
+                              const double* t, const double* weights, const double* c, double w_prod,
+                              QuadraturePathFeature* path, int path_len, double* h, double* scratch) const;
 
   /*! \brief Number of max leaves*/
   int max_leaves_;
